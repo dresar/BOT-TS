@@ -1,0 +1,57 @@
+{
+  "name": "whatsapp-village-helpdesk",
+  "version": "1.0.0",
+  "description": "WhatsApp bot for village office helpdesk",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:studio": "prisma studio",
+    "db:setup": "npm run prisma:generate && npm run prisma:migrate && npm run prisma:seed"
+  },
+  "keywords": ["whatsapp", "bot", "village", "helpdesk", "baileys"],
+  "author": "Village Office",
+  "license": "MIT",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.8",
+    "@prisma/client": "^5.22.0",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "helmet": "^8.0.0",
+    "cors": "^2.8.5",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "pino-pretty": "^11.3.0",
+    "zod": "^3.23.8",
+    "qrcode-terminal": "^0.12.0",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/qrcode-terminal": "^0.12.2",
+    "@typescript-eslint/eslint-plugin": "^8.14.0",
+    "@typescript-eslint/parser": "^8.14.0",
+    "eslint": "^9.14.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "tsx": "^4.19.2",
+    "vitest": "^2.1.4",
+    "supertest": "^7.0.0",
+    "@types/supertest": "^6.0.2",
+    "prisma": "^5.22.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

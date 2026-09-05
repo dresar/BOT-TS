@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String?  @unique
+  role      UserRole @default(OPERATOR)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  createdKnowledge KnowledgeItem[] @relation("CreatedBy")
+  updatedKnowledge KnowledgeItem[] @relation("UpdatedBy")
+  createdSchedules Schedule[]      @relation("CreatedBy")
+  updatedSchedules Schedule[]      @relation("UpdatedBy")
+
+  @@map("users")
+}
+
+model MessageLog {
+  id         String   @id @default(cuid())
+  from       String   // WhatsApp JID
+  to         String   // Bot JID
+  text       String
+  intent     String?
+  confidence Float?
+  reply      String?
+  timestamp  DateTime @default(now())
+  processed  Boolean  @default(false)
+
+  @@map("message_logs")
+  @@index([from])
+  @@index([timestamp])
+  @@index([intent])
+}
+
+model KnowledgeItem {
+  id        String            @id @default(cuid())
+  slug      String            @unique
+  title     String
+  content   String
+  category  KnowledgeCategory
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  createdBy String?
+  updatedBy String?
+
+  // Relations
+  creator User? @relation("CreatedBy", fields: [createdBy], references: [id])
+  updater User? @relation("UpdatedBy", fields: [updatedBy], references: [id])
+
+  @@map("knowledge_items")
+  @@index([category])
+  @@index([slug])
+}
+
+model Schedule {
+  id          String       @id @default(cuid())
+  type        ScheduleType
+  title       String
+  description String?
+  date        DateTime
+  time        String? // Format: "HH:mm"
+  location    String?
+  notes       String?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  createdBy   String?
+  updatedBy   String?
+
+  // Relations
+  creator User? @relation("CreatedBy", fields: [createdBy], references: [id])
+  updater User? @relation("UpdatedBy", fields: [updatedBy], references: [id])
+
+  @@map("schedules")
+  @@index([type])
+  @@index([date])
+}
+
+model Config {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("configs")
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+}
+
+enum KnowledgeCategory {
+  ADMIN_KTP
+  ADMIN_KK
+  ADMIN_PINDAH
+  ADMIN_AKTA
+  SOS_BANSOS
+  POSYANDU
+  KEUANGAN_PBB
+  KEUANGAN_SAMPAH
+  UMUM_JAM
+  UMUM_KONTAK
+  OTHER
+}
+
+enum ScheduleType {
+  POSYANDU
+  RETRIBUSI
+  PBB
+  MEETING
+  OTHER
+}
